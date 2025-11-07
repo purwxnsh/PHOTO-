@@ -1,35 +1,19 @@
 import streamlit as st
-import cv2
+from PIL import Image
+import numpy as np
 
-st.title("📸 Simple Camera Capture with Streamlit + OpenCV")
+st.title("📸 Capture Photo with Streamlit Camera")
 
-# Replace 0 with the camera index that works on your system
-camera_index = 0
-cam = cv2.VideoCapture(camera_index)
+picture = st.camera_input("Click your Pic")
 
-if not cam.isOpened():
-    st.error("Camera not found! Make sure it's connected, not used by another app, and permissions are granted.")
-else:
-    st.info("Camera is ON! Press 'Capture Photo' to take a picture.")
-    stframe = st.empty()  # Placeholder for live feed
-    captured = False
+if picture:
+    # Convert uploaded image into array
+    img = Image.open(picture)
+    img_array = np.array(img)
 
-    while True:
-        ret, frame = cam.read()
-        if not ret:
-            st.error("Failed to grab frame.")
-            break
+    # Save the image
+    img.save("captured_image.png")
 
-        frame = cv2.flip(frame, 1)  # Mirror effect
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        stframe.image(frame_rgb, channels="RGB")
+    st.image(img_array, caption="✅ Your Captured Image", use_column_width=True)
 
-        # Capture photo when button is pressed
-        if st.button("Capture Photo") and not captured:
-            cv2.imwrite("captured_image.png", cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR))
-            st.success("Photo captured and saved as captured_image.png!")
-            captured = True
-            break
-
-    cam.release()
-
+    st.success("Image saved as captured_image.png")

@@ -3,17 +3,12 @@ import cv2
 
 st.title("📸 Simple Camera Capture with Streamlit + OpenCV")
 
-# Try to open the first available camera
-cam = None
-for i in range(5):
-    temp_cam = cv2.VideoCapture(i)
-    if temp_cam.isOpened():
-        cam = temp_cam
-        break
-    temp_cam.release()
+# Replace 0 with the camera index that works on your system
+camera_index = 0
+cam = cv2.VideoCapture(camera_index)
 
-if cam is None or not cam.isOpened():
-    st.error("Camera not found! Make sure it's connected and not used by another app.")
+if not cam.isOpened():
+    st.error("Camera not found! Make sure it's connected, not used by another app, and permissions are granted.")
 else:
     st.info("Camera is ON! Press 'Capture Photo' to take a picture.")
     stframe = st.empty()  # Placeholder for live feed
@@ -37,3 +32,4 @@ else:
             break
 
     cam.release()
+

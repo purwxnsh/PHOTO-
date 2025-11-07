@@ -1,24 +1,20 @@
 import streamlit as st
-import cv2
+from PIL import Image
 import numpy as np
 
-st.title("📸 Capture Photo with OpenCV + Streamlit")
+st.title("📸 Capture Photo with Streamlit Camera")
 
-if st.button("Click your Pic"):
-    cam = cv2.VideoCapture(0)
-    if not cam.isOpened():
-        st.error("Camera not found!")
-    else:
-        ret, frame = cam.read()
-        if ret:
-            # Flip image like a mirror
-            frame = cv2.flip(frame, 1)
-            
-            # Save image
-            cv2.imwrite("new.png", frame)
+picture = st.camera_input("Click your Pic")
 
-            # Convert BGR → RGB for Streamlit display
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+if picture:
+    # Convert uploaded image into array
+    img = Image.open(picture)
+    img_array = np.array(img)
 
-            st.image(frame, caption="Your Captured Image", use_column_width=True)
-        cam.release()
+    # Save the image
+    img.save("captured_image.png")
+
+    st.image(img_array, caption="✅ Your Captured Image", use_column_width=True)
+
+    st.success("Image saved as captured_image.png")
+
